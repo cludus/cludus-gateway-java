@@ -1,2 +1,3 @@
-# cludus-gateway-java
-Gateway implementation in java
+# Cludus Gateway (Java)
+
+Cludus Gateway implementation in java
