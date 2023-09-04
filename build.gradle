@@ -2,6 +2,8 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.1.3'
 	id 'io.spring.dependency-management' version '1.1.3'
+	id 'com.google.cloud.tools.jib' version '3.3.2'
+	id 'maven-publish'
 }
 
 group = 'xyz.cludus.gateway'
@@ -23,4 +25,51 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+def githubActor = System.getenv('GITHUB_ACTOR')
+if (githubActor == null) {
+	githubActor = 'github'
+}
+def githubToken = System.getenv('GITHUB_TOKEN')
+if (githubToken == null) {
+	githubToken = 'github_token'
+}
+
+jib {
+	from {
+		image = 'amazoncorretto:17'
+	}
+	to {
+		image = 'ghcr.io/cludus/gateway-java'
+		tags = ["$version", 'latest']
+		auth {
+			username = githubActor
+			password = githubToken
+		}
+	}
+	container {
+		jvmFlags = []
+		mainClass = 'xyz.cludus.gateway.CludusGatewayApplication'
+		ports = ['8080']
+		format = 'OCI'
+	}
+}
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+		}
+	}
+	repositories {
+		maven {
+			name = "GitHubPackages"
+			url = "https://maven.pkg.github.com/devaffeine/global-auth-cockroachdb"
+			credentials {
+				username = githubActor
+				password = githubToken
+			}
+		}
+	}
 }
