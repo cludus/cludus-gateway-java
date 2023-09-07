@@ -19,8 +19,12 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	runtimeOnly "io.micrometer:micrometer-registry-prometheus:1.10.6"
+	runtimeOnly 'org.springframework.boot:spring-boot-starter-actuator'
 }
 
 tasks.named('test') {
