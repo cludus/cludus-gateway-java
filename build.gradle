@@ -53,7 +53,7 @@ jib {
 		}
 	}
 	container {
-		jvmFlags = []
+		jvmFlags = ['-Xms1gb', '-Xmx4gb']
 		mainClass = 'xyz.cludus.gateway.CludusGatewayApplication'
 		ports = ['8080']
 		format = 'OCI'

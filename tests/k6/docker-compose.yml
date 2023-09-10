@@ -1,0 +1,15 @@
+version: "3.9"
+
+services:
+  gateway-load-test:
+    image: grafana/k6
+    volumes:
+      - ./index.js:/index.js
+    command: run /index.js
+    deploy:
+      mode: replicated
+      replicas: 5
+      resources:
+        limits:
+          cpus: '3'
+          memory: 8gb
