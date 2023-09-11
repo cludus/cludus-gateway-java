@@ -17,9 +17,14 @@ repositories {
 	mavenCentral()
 }
 
+configurations {
+	compile.exclude module: "spring-boot-starter-tomcat"
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-undertow'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
@@ -53,7 +58,7 @@ jib {
 		}
 	}
 	container {
-		jvmFlags = ['-Xms1gb', '-Xmx4gb']
+		jvmFlags = ['-Xms1024M', '-Xmx4g']
 		mainClass = 'xyz.cludus.gateway.CludusGatewayApplication'
 		ports = ['8080']
 		format = 'OCI'

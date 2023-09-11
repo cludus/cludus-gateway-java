@@ -4,6 +4,7 @@ import http from 'k6/http';
 import ws from 'k6/ws';
 
 const baseUrl = 'ws://cludus.xyz:8080/websocket';
+//const baseUrl = 'ws://localhost:8080/websocket';
 
 export const options = {
     vus: 10000,
