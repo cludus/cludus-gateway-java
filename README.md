@@ -10,13 +10,13 @@ This implementation uses Spring Boot 3, Java 17
 
 The docker image can be deployed using 
 
-  docker run ghcr.io/cludus/gateway-java
+    docker run ghcr.io/cludus/gateway-java
 
 For docker compose use the following script
 
-  version: "3.9"
-  services:
-     gateway:
-       ports:
-         - 8080:8080
-       image: ghcr.io/cludus/gateway-java
+    version: "3.9"
+    services:
+       gateway:
+         ports:
+           - 8080:8080
+         image: ghcr.io/cludus/gateway-java
