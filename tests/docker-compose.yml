@@ -14,6 +14,15 @@ services:
 #          cpus: '3'
 #          memory: 8gb
 
+  proxy:
+    hostname: proxy.cludus.local
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    image: haproxy:2.8
+
   prometheus:
     ports:
       - "9090:9090"

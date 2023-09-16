@@ -6,3 +6,11 @@ scrape_configs:
       - targets: ['192.168.1.113:8080']
         labels:
           application: 'cludus-gateway'
+
+  - job_name: 'cludus-proxy-metrics'
+    metrics_path: '/prometheus/metrics'
+    scrape_interval: 3s
+    static_configs:
+      - targets: ['proxy:8404']
+        labels:
+          application: 'cludus-proxy'
