@@ -1,15 +1,22 @@
 version: "3.9"
 
 services:
-  gateway-load-test:
-    image: grafana/k6
+#  gateway-load-test:
+#    image: grafana/k6
+#    volumes:
+#      - ./k6index.js:/k6index.js
+#    command: run /k6index.js
+#    deploy:
+#      mode: replicated
+#      replicas: 5
+#      resources:
+#        limits:
+#          cpus: '3'
+#          memory: 8gb
+
+  prometheus:
+    ports:
+      - "9090:9090"
     volumes:
-      - ./index.js:/index.js
-    command: run /index.js
-    deploy:
-      mode: replicated
-      replicas: 3
-      resources:
-        limits:
-          cpus: '3'
-          memory: 8gb
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    image: prom/prometheus:latest

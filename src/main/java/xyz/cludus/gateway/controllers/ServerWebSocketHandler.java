@@ -1,5 +1,6 @@
 package xyz.cludus.gateway.controllers;
 
+import io.micrometer.core.instrument.Metrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.*;
@@ -12,24 +13,31 @@ import java.util.concurrent.atomic.AtomicLong;
 public class ServerWebSocketHandler extends TextWebSocketHandler {
     private static final Logger LOG = LoggerFactory.getLogger(ServerWebSocketHandler.class);
 
-    private static final AtomicLong COUNT = new AtomicLong();
+    private static final AtomicLong CONNECTIONS = new AtomicLong();
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        COUNT.incrementAndGet();
-        LOG.info("connection count: {}", COUNT.get());
+        CONNECTIONS.incrementAndGet();
+        LOG.info("connection count: {}", CONNECTIONS.get());
+        Metrics.gauge("cludus_gateway_connections_count", CONNECTIONS);
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        String request = message.getPayload();
-        String response = String.format("response from server to '%s'", HtmlUtils.htmlEscape(request));
-        session.sendMessage(new TextMessage(response));
+        Metrics.counter("cludus_gateway_messages_count").increment();
+        var latency = Metrics.timer("cludus_gateway_messages_latency");
+        latency.recordCallable(() -> {
+            String request = message.getPayload();
+            String response = String.format("response from server to '%s'", HtmlUtils.htmlEscape(request));
+            session.sendMessage(new TextMessage(response));
+            return null;
+        });
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        COUNT.decrementAndGet();
-        LOG.info("connection count: {}", COUNT.get());
+        CONNECTIONS.decrementAndGet();
+        LOG.info("connection count: {}", CONNECTIONS.get());
+        Metrics.gauge("cludus_gateway_connections_count", CONNECTIONS);
     }
 }
