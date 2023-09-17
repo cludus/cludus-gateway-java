@@ -2,7 +2,7 @@ import { check } from 'k6';
 import ws from 'k6/ws';
 
 //const baseUrl = 'ws://tests.cludus.xyz:8080/websocket';
-const baseUrl = 'ws://proxy.cludus.local/websocket';
+const baseUrl = 'ws://gateway.cludus.dev/websocket';
 
 export const options = {
     vus: 10000,

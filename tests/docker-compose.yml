@@ -15,17 +15,24 @@ services:
 #          memory: 8gb
 
   proxy:
-    hostname: proxy.cludus.local
-    ports:
-      - "80:80"
-      - "443:443"
+    hostname: gateway.cludus.dev
+    labels:
+      - 'net.costela.docker-etchosts.extra_hosts=["metrics.cludus.dev"]'
     volumes:
       - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+      - ./certs/gateway-cludus-dev.pem:/usr/local/etc/haproxy/gateway-cludus-dev.pem
     image: haproxy:2.8
 
+  gateway-1:
+    image: ghcr.io/cludus/gateway-java:0.0.2
+
+  gateway-2:
+    image: ghcr.io/cludus/gateway-java:0.0.2
+
+  gateway-3:
+    image: ghcr.io/cludus/gateway-java:0.0.2
+
   prometheus:
-    ports:
-      - "9090:9090"
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     image: prom/prometheus:latest
