@@ -1,18 +1,20 @@
 version: "3.9"
 
 services:
-#  gateway-load-test:
-#    image: grafana/k6
-#    volumes:
-#      - ./k6index.js:/k6index.js
-#    command: run /k6index.js
-#    deploy:
-#      mode: replicated
-#      replicas: 5
-#      resources:
-#        limits:
-#          cpus: '3'
-#          memory: 8gb
+  gateway-load-test:
+    volumes:
+      - ./k6index.js:/k6index.js
+    command: run /k6index.js
+    deploy:
+      mode: replicated
+      replicas: 3
+      resources:
+        limits:
+          cpus: '3'
+          memory: 8gb
+    depends_on:
+      - proxy
+    image: grafana/k6
 
   proxy:
     hostname: gateway.cludus.dev
@@ -21,6 +23,12 @@ services:
     volumes:
       - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
       - ./certs/gateway-cludus-dev.pem:/usr/local/etc/haproxy/gateway-cludus-dev.pem
+      - ./certs/metrics-cludus-dev.pem:/usr/local/etc/haproxy/metrics-cludus-dev.pem
+    depends_on:
+      - gateway-1
+      - gateway-2
+      - gateway-3
+      - prometheus
     image: haproxy:2.8
 
   gateway-1:
