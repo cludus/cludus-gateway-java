@@ -24,13 +24,13 @@ openssl req -new \
             -out $file_name.csr \
             -sha256 \
             -nodes \
-            -subj "/C=XX/ST=XX/L=Home/O=XX/OU=XX/CN=$domain_name" \
-            -addext "subjectAltName=DNS:$domain_name"
+            -subj "/C=XX/ST=XX/L=Home/O=XX/OU=XX/CN=$domain_name"
 
 openssl x509 -req \
     -in $file_name.csr \
     -CA $root_file_name.crt -CAkey $root_file_name.key \
     -CAcreateserial -out $file_name.crt \
+    -extfile gateway-cludus-dev.ext \
     -days 3650 \
     -sha256
 

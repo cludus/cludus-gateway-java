@@ -37,3 +37,4 @@ out/
 .vscode/
 /tests/certs/**
 !/tests/certs/create-cer.sh
+!/tests/certs/gateway-cludus-dev.ext
