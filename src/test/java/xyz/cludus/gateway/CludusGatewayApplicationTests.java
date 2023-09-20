@@ -32,7 +32,7 @@ class CludusGatewayApplicationTests {
 		CountDownLatch cdl = new CountDownLatch(1);
 		var client = new TestWebSocketClient(cdl);
 		Session session = container.connectToServer(client,
-				URI.create("ws://127.0.0.1:" + port + "/websocket"));
+				URI.create("ws://127.0.0.1:" + port + "/chat"));
 
 		session.getBasicRemote().sendText("hola");
 		cdl.await();
