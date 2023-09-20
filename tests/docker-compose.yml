@@ -4,7 +4,6 @@ services:
   proxy:
     hostname: gateway.cludus.tests
     volumes:
-      - ./503.http:/etc/haproxy/errors/503.http
       - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
     depends_on:
       - gateway-1

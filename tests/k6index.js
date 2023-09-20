@@ -1,11 +1,11 @@
 import { check } from 'k6';
 import ws from 'k6/ws';
 
-//const baseUrl = 'ws://tests.cludus.xyz:8080/websocket';
+//const baseUrl = 'ws://gateway.cludus.tests/websocket';
 const baseUrl = 'ws://gateway.cludus.xyz/websocket';
 
 export const options = {
-    vus: 10000,
+    vus: 20000,
     duration: '5m0s',
 };
 
