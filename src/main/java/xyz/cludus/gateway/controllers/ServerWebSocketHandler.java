@@ -12,6 +12,8 @@ import org.springframework.web.socket.WebSocketSession;
 import xyz.cludus.gateway.dtos.ClientMessageDto;
 import xyz.cludus.gateway.dtos.ServerMessageDto;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class ServerWebSocketHandler extends TextWebSocketHandler {
@@ -21,11 +23,14 @@ public class ServerWebSocketHandler extends TextWebSocketHandler {
 
     private static final Gson GSON = new Gson();
 
+    private Map<String, WebSocketSession> sessionMap = new HashMap<>();
+
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         CONNECTIONS.incrementAndGet();
         LOG.info("connection count: {}", CONNECTIONS.get());
         Metrics.gauge("cludus_gateway_connections_count", CONNECTIONS);
+        sessionMap.put(session.getPrincipal().getName(), session);
     }
 
     @Override
@@ -35,16 +40,20 @@ public class ServerWebSocketHandler extends TextWebSocketHandler {
         latency.recordCallable(() -> {
             try {
                 var msg = GSON.fromJson(message.getPayload(), ClientMessageDto.class);
-                var response = ServerMessageDto.ack(0, msg.getSeq());
+                if(msg.getAction() == ClientMessageDto.Actions.SEND) {
+                    var response = ServerMessageDto.message(session.getPrincipal().getName(), msg.getContent());
+                    sessionMap.get(msg.getRecipient()).sendMessage(new TextMessage(GSON.toJson(response)));
+                }
+                var response = ServerMessageDto.ack();
                 session.sendMessage(new TextMessage(GSON.toJson(response)));
             }
             catch (JsonSyntaxException ex) {
-                var response = ServerMessageDto.error(0, 0, ex.getMessage());
+                var response = ServerMessageDto.error(ex.getMessage());
                 session.sendMessage(new TextMessage(GSON.toJson(response)));
             }
             catch (Exception ex) {
                 LOG.error(ex.getMessage(), ex);
-                var response = ServerMessageDto.error(0, 0, ex.getMessage());
+                var response = ServerMessageDto.error(ex.getMessage());
                 session.sendMessage(new TextMessage(GSON.toJson(response)));
             }
             return null;

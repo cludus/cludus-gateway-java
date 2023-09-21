@@ -29,8 +29,6 @@ public class ClientMessageDto {
     }
 
     private Actions action;
-    private String token;
-    private long seq;
     private String recipient;
     private String content;
 }

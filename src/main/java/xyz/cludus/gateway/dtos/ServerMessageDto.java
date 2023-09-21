@@ -13,28 +13,33 @@ public class ServerMessageDto {
          * The message has been received
          */
         ACK,
-        ERROR
+        ERROR,
+        MESSAGE
     }
 
     private Actions action;
-    private long seq;
-    private long messageSeq;
     private String errorMsg;
+    private String sender;
+    private String content;
 
-    public static ServerMessageDto ack(long seq, long messageSeq) {
+    public static ServerMessageDto ack() {
         ServerMessageDto result = new ServerMessageDto();
         result.action = Actions.ACK;
-        result.seq = seq;
-        result.messageSeq = messageSeq;
         return result;
     }
 
-    public static ServerMessageDto error(long seq, long messageSeq, String errorMsg) {
+    public static ServerMessageDto error(String errorMsg) {
         ServerMessageDto result = new ServerMessageDto();
         result.action = Actions.ERROR;
-        result.seq = seq;
-        result.messageSeq = messageSeq;
         result.errorMsg = errorMsg;
+        return result;
+    }
+
+    public static ServerMessageDto message(String sender, String content) {
+        ServerMessageDto result = new ServerMessageDto();
+        result.action = Actions.MESSAGE;
+        result.sender = sender;
+        result.content = content;
         return result;
     }
 }
