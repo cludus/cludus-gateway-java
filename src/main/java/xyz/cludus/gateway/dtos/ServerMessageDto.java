@@ -1,6 +1,5 @@
 package xyz.cludus.gateway.dtos;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
