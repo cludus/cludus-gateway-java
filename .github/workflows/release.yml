@@ -44,7 +44,9 @@ jobs:
     - name: Build with Gradle
       uses: gradle/gradle-build-action@v2.8.1
       with:
-        arguments: release -Prelease.useAutomaticVersion=true -Prelease.releaseVersion=${{ github.events.inputs.version }} -Prelease.newVersion=${{ github.events.inputs.next_version }}-SNAPSHOT
+        arguments: release -Prelease.useAutomaticVersion=true -Prelease.releaseVersion=$VERSION -Prelease.newVersion=$NEXT_VERSION
       env:
         GITHUB_ACTOR: ${{ secrets.GITHUB_ACTOR }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        VERSION: ${{ github.events.inputs.version }}
+        NEXT_VERSION: ${{ github.events.inputs.next_version }}
