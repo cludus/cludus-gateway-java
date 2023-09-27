@@ -83,8 +83,8 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-def githubActor = System.getenv('GITHUB_ACTOR')
-def githubToken = System.getenv('GITHUB_TOKEN')
+def githubActor = System.getenv().getOrDefault('GITHUB_ACTOR', 'none')
+def githubToken = System.getenv().getOrDefault('GITHUB_TOKEN', 'none')
 
 release {
 	tagTemplate = '${version}'
