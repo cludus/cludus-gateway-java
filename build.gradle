@@ -84,13 +84,7 @@ tasks.named('test') {
 }
 
 def githubActor = System.getenv('GITHUB_ACTOR')
-if (githubActor == null) {
-	githubActor = 'github'
-}
 def githubToken = System.getenv('GITHUB_TOKEN')
-if (githubToken == null) {
-	githubToken = 'github_token'
-}
 
 release {
 	tagTemplate = '${version}'
