@@ -12,11 +12,11 @@ on:
     inputs:
       version:
         description: Version to be released
-        required: true
+        required: false
         default: ''
       next_version:
         description: Next version to be released
-        required: true
+        required: false
         default: ''
 
 permissions:
