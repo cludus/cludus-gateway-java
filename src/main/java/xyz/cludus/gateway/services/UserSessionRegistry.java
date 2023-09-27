@@ -1,4 +1,4 @@
-package xyz.cludus.gateway.controllers;
+package xyz.cludus.gateway.services;
 
 import io.micrometer.core.instrument.Metrics;
 import org.slf4j.Logger;

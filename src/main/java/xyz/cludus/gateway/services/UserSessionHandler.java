@@ -1,4 +1,4 @@
-package xyz.cludus.gateway.controllers;
+package xyz.cludus.gateway.services;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -55,7 +55,7 @@ public class UserSessionHandler {
         }
     }
 
-    void messageReceived(TextMessage message) {
+    public void messageReceived(TextMessage message) {
         try {
             var clientMsg = readClientMessage(message);
             if(clientMsg.getAction() == ClientMessageDto.Actions.SEND) {
@@ -83,6 +83,7 @@ public class UserSessionHandler {
     }
 
     void sendActionReceived(ClientMessageDto clientMsg) throws IOException {
+        lastUpdated = LocalDateTime.now();
         var response = ServerMessageDto.message(user, clientMsg.getContent());
         var recipientSession = registry.getSession(clientMsg.getRecipient()).session;
         recipientSession.sendMessage(toTextMessage(response));

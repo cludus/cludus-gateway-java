@@ -6,7 +6,17 @@ import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
+import xyz.cludus.gateway.services.UserSessionRegistry;
+
 import java.util.concurrent.TimeUnit;
+
+/*
+
+user1 -> UserSessionHandler(WebSocketSession)
+user2 -> UserSessionHandler(WebSocketSession)
+user3 -> UserSessionHandler(WebSocketSession)
+
+ */
 
 public class WebSocketHandler extends TextWebSocketHandler {
     private UserSessionRegistry registry = new UserSessionRegistry();
