@@ -96,6 +96,10 @@ release {
 	tagTemplate = '${version}'
 }
 
+tasks.register('afterReleaseBuild') {
+	dependsOn tasks.jib
+}
+
 jib {
 	from {
 		image = 'amazoncorretto:17'

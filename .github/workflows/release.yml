@@ -9,15 +9,6 @@ name: Release New Version
 
 on:
   workflow_dispatch:
-    inputs:
-      version:
-        description: Version to be released
-        required: false
-        default: ''
-      next_version:
-        description: Next version to be released
-        required: false
-        default: ''
 
 permissions:
   deployments: write
@@ -44,9 +35,7 @@ jobs:
     - name: Build with Gradle
       uses: gradle/gradle-build-action@v2.8.1
       with:
-        arguments: release -Prelease.useAutomaticVersion=true -Prelease.releaseVersion=$VERSION -Prelease.newVersion=$NEXT_VERSION
+        arguments: release -Prelease.useAutomaticVersion=true
       env:
         GITHUB_ACTOR: ${{ secrets.GITHUB_ACTOR }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        VERSION: ${{ github.events.inputs.version }}
-        NEXT_VERSION: ${{ github.events.inputs.next_version }}
