@@ -34,6 +34,9 @@ jobs:
       with:
         java-version: '17'
         distribution: 'corretto'
+    - run: |
+        git config --global user.email "admin@cludus.xyz"
+        git config --global user.name "cludusadmin"
     - name: Build with Gradle
       uses: gradle/gradle-build-action@v2.8.1
       with:
