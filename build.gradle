@@ -96,7 +96,7 @@ release {
 	tagTemplate = '${version}'
 }
 
-tasks.register('afterReleaseBuild') {
+tasks.named('afterReleaseBuild') {
 	dependsOn tasks.jib
 }
 
