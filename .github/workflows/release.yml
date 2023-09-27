@@ -42,5 +42,5 @@ jobs:
       with:
         arguments: release -Prelease.useAutomaticVersion=true -Prelease.releaseVersion=${{ github.events.inputs.version }} -Prelease.newVersion=${{ github.events.inputs.next_version }}-SNAPSHOT
       env:
-        GITHUB_ACTOR: gilbva
+        GITHUB_ACTOR: ${{ secrets.GITHUB_ACTOR }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
