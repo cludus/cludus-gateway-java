@@ -85,8 +85,13 @@ public class UserSessionHandler {
     void sendActionReceived(ClientMessageDto clientMsg) throws IOException {
         lastUpdated = LocalDateTime.now();
         var response = ServerMessageDto.message(user, clientMsg.getContent());
-        var recipientSession = registry.getSession(clientMsg.getRecipient()).session;
-        recipientSession.sendMessage(toTextMessage(response));
+        var reciptHandler = registry.getSession(clientMsg.getRecipient());
+        if(reciptHandler != null) {
+            reciptHandler.sendMessage(toTextMessage(response));
+        }
+        else {
+            LOG.warn("User {} is not connected.", clientMsg.getRecipient());
+        }
     }
 
     private ClientMessageDto readClientMessage(TextMessage message) {
@@ -97,7 +102,7 @@ public class UserSessionHandler {
         return new TextMessage(GSON.toJson(message));
     }
 
-    void sendMessage(TextMessage message) {
+    synchronized void sendMessage(TextMessage message) {
         try {
             session.sendMessage(message);
         }

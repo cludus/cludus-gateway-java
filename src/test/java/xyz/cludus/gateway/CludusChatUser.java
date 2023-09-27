@@ -2,6 +2,9 @@ package xyz.cludus.gateway;
 
 import com.google.gson.Gson;
 import jakarta.websocket.*;
+import org.apache.tomcat.websocket.pojo.PojoMessageHandlerWholeText;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import xyz.cludus.gateway.dtos.ClientMessageDto;
 import xyz.cludus.gateway.dtos.ServerMessageDto;
 
@@ -11,6 +14,8 @@ import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
 public class CludusChatUser extends Endpoint {
+    private static final Logger LOG = LoggerFactory.getLogger(CludusChatUser.class);
+
     private static final Gson GSON = new Gson();
 
     private WebSocketContainer container;
@@ -41,15 +46,20 @@ public class CludusChatUser extends Endpoint {
         session = container.connectToServer(this, clientConfig, uri);
     }
 
-    @OnMessage
     public void onMessage(String message) {
         var serverMsg = GSON.fromJson(message, ServerMessageDto.class);
-        var testMsg = messages.get(serverMsg.getContent());
-        testMsg.setReceived(true);
-        testMsg.setReceivedTs(System.currentTimeMillis());
+        if(serverMsg.getAction() == ServerMessageDto.Actions.MESSAGE) {
+            LOG.info("Message received " + serverMsg.getContent());
+            var testMsg = messages.get(serverMsg.getContent());
+            testMsg.setReceived(true);
+            testMsg.setReceivedTs(System.currentTimeMillis());
+        }
     }
 
-    public void send(CludusChatTestMessage msg) {
+    public void send(CludusChatTestMessage msg) throws DeploymentException, IOException {
+        while (!session.isOpen()) {
+            connect();
+        }
         var clientMsg = new ClientMessageDto();
         clientMsg.setAction(ClientMessageDto.Actions.SEND);
         clientMsg.setContent(msg.getContent());
@@ -66,5 +76,11 @@ public class CludusChatUser extends Endpoint {
     @Override
     public void onOpen(Session session, EndpointConfig config) {
         this.session = session;
+        this.session.addMessageHandler(new MessageHandler.Whole<String>() {
+            @Override
+            public void onMessage(String message) {
+                CludusChatUser.this.onMessage(message);
+            }
+        });
     }
 }

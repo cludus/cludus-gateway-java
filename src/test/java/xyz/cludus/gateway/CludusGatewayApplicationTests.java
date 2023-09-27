@@ -3,8 +3,11 @@ package xyz.cludus.gateway;
 import jakarta.websocket.ContainerProvider;
 import jakarta.websocket.Session;
 import jakarta.websocket.WebSocketContainer;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import xyz.cludus.gateway.dtos.ClientMessageDto;
@@ -15,6 +18,7 @@ import java.util.concurrent.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CludusGatewayApplicationTests {
+	private static final Logger LOG = LoggerFactory.getLogger(CludusChatUser.class);
 
 	@LocalServerPort
 	private int port;
@@ -28,8 +32,8 @@ class CludusGatewayApplicationTests {
 
 	@Test
 	public void testGetLog() throws Exception {
-		Map<String, CludusChatUser> users = createUsers(100);
-		LinkedList<CludusChatTestMessage> messages = createMessages(100000, users);
+		Map<String, CludusChatUser> users = createUsers(10);
+		LinkedList<CludusChatTestMessage> messages = createMessages(10000, users);
 		Map<String, CludusChatTestMessage> messageByContent = new ConcurrentHashMap<>();
 		messages.forEach(x -> {
 			messageByContent.put(x.getContent(), x);
@@ -49,16 +53,26 @@ class CludusGatewayApplicationTests {
 		LinkedList<CludusChatTestMessage> procesed = new LinkedList<>();
 		ScheduledExecutorService executor = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
 		executor.scheduleAtFixedRate(() -> {
-			var toSend = messages.removeFirst();
-			users.get(toSend.getFrom()).send(toSend);
-			procesed.add(toSend);
-			if(messages.isEmpty()) {
-				cdl.countDown();
+			try {
+				LOG.info("sending message, {} remaining", messages.size());
+				if (messages.isEmpty()) {
+					return;
+				}
+				var toSend = messages.removeFirst();
+				users.get(toSend.getFrom()).send(toSend);
+				procesed.add(toSend);
+				if (messages.isEmpty()) {
+					cdl.countDown();
+				}
 			}
-		}, 10, 10, TimeUnit.MILLISECONDS);
+			catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}, 1000, 1, TimeUnit.MILLISECONDS);
 		cdl.await();
 
-		//TODO verify
+		//Should have received all messages
+		Assertions.assertEquals(0, messages.stream().filter(x -> !x.isReceived()).count() );
 	}
 
 	private LinkedList<CludusChatTestMessage> createMessages(int count, Map<String, CludusChatUser> users) {

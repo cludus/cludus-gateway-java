@@ -15,6 +15,7 @@ public class UserSessionRegistry {
     private Map<String, UserSessionHandler> sessionsMap = new ConcurrentHashMap<>();
 
     public UserSessionHandler register(WebSocketSession session) {
+        LOG.info("registering a new websocket connection {}", UserSessionHandler.findUser(session));
         var result = new UserSessionHandler(session, this);
         sessionsMap.put(result.getUser(), result);
         updateMetrics();
@@ -33,6 +34,7 @@ public class UserSessionRegistry {
         var userSession = getSession(session);
         if(session.isOpen()) {
             try {
+                LOG.info("closing a websocket connection {}", UserSessionHandler.findUser(session));
                 session.close(status);
                 sessionsMap.remove(userSession.getUser());
             }
@@ -50,6 +52,7 @@ public class UserSessionRegistry {
                 .filter(x -> !x.isOpen())
                 .map(UserSessionHandler::getUser)
                 .toList();
+        LOG.info("evicting  {} websocket connections", toRemove.size());
         toRemove.forEach(k -> sessionsMap.remove(k));
         updateMetrics();
     }
