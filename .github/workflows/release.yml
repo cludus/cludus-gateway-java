@@ -20,7 +20,11 @@ on:
         default: ''
 
 permissions:
-  contents: read
+  deployments: write
+  contents: write
+  statuses: write
+  actions: write
+  checks: write
 
 jobs:
   build:
