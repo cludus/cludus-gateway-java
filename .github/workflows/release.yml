@@ -63,6 +63,6 @@ jobs:
         tag_name: ${{ steps.version.outputs.release_tag }}
         release_name: Release ${{ steps.version.outputs.release_tag }}
         body: |
-          Changes in this Release
+          Version ${{ steps.version.outputs.release_tag }}
         draft: false
         prerelease: false
