@@ -46,4 +46,4 @@ jobs:
         GITHUB_ACTOR: ${{ github.actor }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - run: |
-        docker push --all-tags
+        docker push ghcr.io/cludus/gateway-java --all-tags
