@@ -91,7 +91,7 @@ release {
 }
 
 tasks.named('afterReleaseBuild') {
-	dependsOn tasks.jibDockerBuild
+	dependsOn tasks.jib
 }
 
 jib {
