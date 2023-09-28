@@ -29,7 +29,8 @@ jobs:
       with:
         java-version: '17'
         distribution: 'corretto'
-    - run: |
+    - name: Git Config
+      run: |
         git config --global user.email "admin@cludus.xyz"
         git config --global user.name "cludusadmin"
     - name: Login to GitHub Container Registry
@@ -45,5 +46,6 @@ jobs:
       env:
         GITHUB_ACTOR: ${{ github.actor }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - run: |
+    - name: Push Docker Image
+      run: |
         docker push ghcr.io/cludus/gateway-java --all-tags
