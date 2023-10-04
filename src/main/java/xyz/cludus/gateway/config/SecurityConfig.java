@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import xyz.cludus.gateway.services.JwtService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,12 +29,17 @@ import java.util.ArrayList;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+    @Autowired
+    private JwtService jwtService;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/").permitAll()
-                        .anyRequest().authenticated())
+                .authorizeHttpRequests(requests -> requests
+                            .requestMatchers("/")
+                            .permitAll()
+                            .anyRequest()
+                            .authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(configurer -> configurer.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .addFilterBefore(this::filterSecurity, UsernamePasswordAuthenticationFilter.class);
@@ -41,10 +48,11 @@ public class SecurityConfig {
     }
 
     private void filterSecurity(ServletRequest request, ServletResponse response, FilterChain chain) {
-        if (request instanceof HttpServletRequest httpServletRequest) {
-            String jwt = resolveToken(httpServletRequest);
+        if (request instanceof HttpServletRequest hsRequest) {
+            String jwt = resolveToken(hsRequest);
             if (jwt != null && !jwt.isBlank()) {
-                Authentication authentication = new UsernamePasswordAuthenticationToken(jwt, null, new ArrayList<>());
+                String username = jwtService.parseToken(jwt);
+                Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }

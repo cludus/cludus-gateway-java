@@ -1,7 +1,9 @@
 package xyz.cludus.gateway.controllers;
 
 import io.micrometer.core.instrument.Metrics;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 import org.springframework.web.socket.TextMessage;
@@ -10,16 +12,11 @@ import xyz.cludus.gateway.services.UserSessionRegistry;
 
 import java.util.concurrent.TimeUnit;
 
-/*
-
-user1 -> UserSessionHandler(WebSocketSession)
-user2 -> UserSessionHandler(WebSocketSession)
-user3 -> UserSessionHandler(WebSocketSession)
-
- */
-
+@Component
 public class WebSocketHandler extends TextWebSocketHandler {
-    private UserSessionRegistry registry = new UserSessionRegistry();
+
+    @Autowired
+    private UserSessionRegistry registry;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
