@@ -17,7 +17,7 @@ plugins {
 	id 'com.google.protobuf' version "0.9.2"
 }
 
-group = 'xyz.cludus.gateway'
+group = 'xyz.cludus'
 description = "Cludus's chat gateway server implementation in java."
 
 java {
