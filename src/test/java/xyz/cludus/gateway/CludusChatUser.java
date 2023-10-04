@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.cludus.gateway.dtos.ClientMessageDto;
 import xyz.cludus.gateway.dtos.ServerMessageDto;
+import xyz.cludus.gateway.services.JwtService;
 
 import java.io.IOException;
 import java.net.URI;
@@ -24,10 +25,13 @@ public class CludusChatUser extends Endpoint {
     private Map<String, CludusChatTestMessage> messages;
     private Session session;
 
-    public CludusChatUser(WebSocketContainer container, int port, String user) {
+    private JwtService jwtService;
+
+    public CludusChatUser(WebSocketContainer container, int port, String user, JwtService jwtService) {
         this.container = container;
         this.uri = URI.create("ws://127.0.0.1:" + port + "/chat");
         this.user = user;
+        this.jwtService = jwtService;
     }
 
     public void setMessages(Map<String, CludusChatTestMessage> messages) {
@@ -36,10 +40,11 @@ public class CludusChatUser extends Endpoint {
 
     public void connect() throws DeploymentException, IOException {
         ClientEndpointConfig.Builder configBuilder = ClientEndpointConfig.Builder.create();
-
+        String jwt = jwtService.createToken(user);
+        LOG.info("bearer token for user {}: {}", user, jwt);
         configBuilder.configurator(new ClientEndpointConfig.Configurator() {
             public void beforeRequest(Map<String, List<String>> headers) {
-                headers.put("Authorization", Arrays.asList("Bearer " + user));
+                headers.put("Authorization", Arrays.asList("Bearer " + jwt));
             }
         });
         ClientEndpointConfig clientConfig = configBuilder.build();

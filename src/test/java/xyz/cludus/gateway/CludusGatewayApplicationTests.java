@@ -8,9 +8,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import xyz.cludus.gateway.dtos.ClientMessageDto;
+import xyz.cludus.gateway.services.JwtService;
 
 import java.net.URI;
 import java.util.*;
@@ -22,6 +24,9 @@ class CludusGatewayApplicationTests {
 
 	@LocalServerPort
 	private int port;
+
+	@Autowired
+	private JwtService jwtService;
 
 	private static WebSocketContainer container;
 
@@ -50,7 +55,7 @@ class CludusGatewayApplicationTests {
 		});
 
 		CountDownLatch cdl = new CountDownLatch(1);
-		LinkedList<CludusChatTestMessage> procesed = new LinkedList<>();
+		Deque<CludusChatTestMessage> procesed = new ConcurrentLinkedDeque<>();
 		ScheduledExecutorService executor = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
 		executor.scheduleAtFixedRate(() -> {
 			try {
@@ -92,7 +97,7 @@ class CludusGatewayApplicationTests {
 		Map<String, CludusChatUser> users = new HashMap<>();
 		for(int i = 0; i < count; i++) {
 			String userName = "user" + i;
-			users.put(userName, new CludusChatUser(container, port, userName));
+			users.put(userName, new CludusChatUser(container, port, userName, jwtService));
 		}
 		return users;
 	}
