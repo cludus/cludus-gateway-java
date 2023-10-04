@@ -36,10 +36,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests
-                            .requestMatchers("/")
-                            .permitAll()
-                            .anyRequest()
-                            .authenticated())
+                            .requestMatchers("/").permitAll()
+                            .requestMatchers("/actuator/*").permitAll()
+                            .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(configurer -> configurer.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .addFilterBefore(this::filterSecurity, UsernamePasswordAuthenticationFilter.class);

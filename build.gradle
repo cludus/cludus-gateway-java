@@ -18,6 +18,7 @@ plugins {
 }
 
 group = 'xyz.cludus.gateway'
+description = "Cludus's chat gateway server implementation in java."
 
 java {
 	sourceCompatibility = '17'
@@ -84,6 +85,10 @@ protobuf {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+tasks.named('processResources') {
+	expand(project.properties)
 }
 
 def githubActor = System.getenv().getOrDefault('GITHUB_ACTOR', 'none')
