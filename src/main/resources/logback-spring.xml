@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="Console"
+              class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%yellow(%d{HH:mm:ss.SSS}) [%t] %highlight(%-5level) %cyan(%logger{20}): %msg%n %ex{full}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="Loki" class="com.github.loki4j.logback.Loki4jAppender">
+        <http>
+            <url>\${LOKI_URL}/loki/api/v1/push</url>
+        </http>
+        <format>
+            <label>
+                <pattern>app=cludus-identity,level=%level</pattern>
+            </label>
+            <message>
+                <pattern>
+                    {
+                    "level":"%level",
+                    "class":"%logger{36}",
+                    "thread":"%thread",
+                    "message": "%message",
+                    "requestId": "%X{X-Request-ID}"
+                    }
+                </pattern>
+            </message>
+        </format>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="Console" />
+        <appender-ref ref="Loki"/>
+    </root>
+</configuration>

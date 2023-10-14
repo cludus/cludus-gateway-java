@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  loki:
+    ports:
+      - 3100:3100
+    image: grafana/loki
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    environment:
+      - GF_SECURITY_ADMIN_USER=cludus
+      - GF_SECURITY_ADMIN_PASSWORD=cludus
+    depends_on:
+      - loki

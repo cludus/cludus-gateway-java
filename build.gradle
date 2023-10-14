@@ -45,6 +45,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation "io.micrometer:micrometer-registry-prometheus:1.10.6"
 	implementation 'com.google.code.gson:gson:2.10.1'
+	implementation 'com.github.loki4j:loki-logback-appender:1.4.1'
 
 	implementation 'io.jsonwebtoken:jjwt-api:0.10.8'
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.10.8'
