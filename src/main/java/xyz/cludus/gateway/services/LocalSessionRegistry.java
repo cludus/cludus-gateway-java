@@ -3,6 +3,7 @@ package xyz.cludus.gateway.services;
 import io.micrometer.core.instrument.Metrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketSession;
@@ -12,13 +13,16 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
-public class UserSessionRegistry {
-    private static final Logger LOG = LoggerFactory.getLogger(UserSessionRegistry.class);
+public class LocalSessionRegistry {
+    private static final Logger LOG = LoggerFactory.getLogger(LocalSessionRegistry.class);
     private Map<String, UserSessionHandler> sessionsMap = new ConcurrentHashMap<>();
+
+    @Autowired
+    private GlogalSessionRegistry globalRegistry;
 
     public UserSessionHandler register(WebSocketSession session) {
         LOG.info("registering a new websocket connection {}", UserSessionHandler.findUser(session));
-        var result = new UserSessionHandler(session, this);
+        var result = new UserSessionHandler(session, this, globalRegistry);
         sessionsMap.put(result.getUser(), result);
         updateMetrics();
         return result;

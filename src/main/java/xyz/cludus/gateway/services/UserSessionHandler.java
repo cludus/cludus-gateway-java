@@ -25,17 +25,21 @@ public class UserSessionHandler {
     private String user;
     private LocalDateTime lastUpdated;
 
-    private UserSessionRegistry registry;
+    private LocalSessionRegistry localRegistry;
+
+    private GlogalSessionRegistry globalRegistry;
 
     public static String findUser(WebSocketSession session) {
         return Objects.requireNonNull(session.getPrincipal()).getName();
     }
 
-    public UserSessionHandler(WebSocketSession session, UserSessionRegistry registry) {
+    public UserSessionHandler(WebSocketSession session, LocalSessionRegistry localRegistry, GlogalSessionRegistry globalRegistry) {
         this.session = session;
-        this.registry = registry;
+        this.localRegistry = localRegistry;
+        this.globalRegistry = globalRegistry;
         this.user = findUser(session);
         this.lastUpdated = LocalDateTime.now();
+        globalRegistry.updateGateway(user);
     }
 
     public boolean isIdle() {
@@ -80,17 +84,24 @@ public class UserSessionHandler {
 
     void heartBeatReceived(ClientMessageDto clientMsg) {
         lastUpdated = LocalDateTime.now();
+        globalRegistry.updateGateway(user);
     }
 
     void sendActionReceived(ClientMessageDto clientMsg) throws IOException {
         lastUpdated = LocalDateTime.now();
         var response = ServerMessageDto.message(user, clientMsg.getContent());
-        var reciptHandler = registry.getSession(clientMsg.getRecipient());
+        var reciptHandler = localRegistry.getSession(clientMsg.getRecipient());
         if(reciptHandler != null) {
             reciptHandler.sendMessage(toTextMessage(response));
         }
         else {
-            LOG.warn("User {} is not connected.", clientMsg.getRecipient());
+            String userGw = globalRegistry.findGateway(user);
+            if(userGw != null) {
+                LOG.warn("User {} is connected to gateway {}.", clientMsg.getRecipient(), userGw);
+            }
+            else {
+                LOG.warn("User {} is not connected.", clientMsg.getRecipient());
+            }
         }
     }
 

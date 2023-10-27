@@ -8,7 +8,7 @@ import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
-import xyz.cludus.gateway.services.UserSessionRegistry;
+import xyz.cludus.gateway.services.LocalSessionRegistry;
 
 import java.util.concurrent.TimeUnit;
 
@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 public class WebSocketHandler extends TextWebSocketHandler {
 
     @Autowired
-    private UserSessionRegistry registry;
+    private LocalSessionRegistry registry;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
