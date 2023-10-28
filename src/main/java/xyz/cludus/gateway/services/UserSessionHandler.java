@@ -21,6 +21,7 @@ public class UserSessionHandler {
     private static final Gson GSON = new Gson();
 
     private WebSocketSession session;
+
     @Getter
     private String user;
     private LocalDateTime lastUpdated;
@@ -61,12 +62,19 @@ public class UserSessionHandler {
 
     public void messageReceived(TextMessage message) {
         try {
+            if(LOG.isDebugEnabled()) {
+                LOG.debug("Message received: {}, from user {}", GSON.toJson(message), user);
+            }
             var clientMsg = readClientMessage(message);
             if(clientMsg.getAction() == ClientMessageDto.Actions.SEND) {
                 sendActionReceived(clientMsg);
             }
             else if(clientMsg.getAction() == ClientMessageDto.Actions.HEARTBEAT) {
                 heartBeatReceived(clientMsg);
+            }
+
+            if(LOG.isDebugEnabled()) {
+                LOG.debug("Sending ack response for message: {} to {}", GSON.toJson(message), user);
             }
             var response = ServerMessageDto.ack();
             sendMessage(toTextMessage(response));
@@ -92,15 +100,18 @@ public class UserSessionHandler {
         var response = ServerMessageDto.message(user, clientMsg.getContent());
         var reciptHandler = localRegistry.getSession(clientMsg.getRecipient());
         if(reciptHandler != null) {
+            if(LOG.isDebugEnabled()) {
+                LOG.debug("Sending message to client: {} from user {}", GSON.toJson(response), user);
+            }
             reciptHandler.sendMessage(toTextMessage(response));
         }
         else {
             String userGw = globalRegistry.findGateway(user);
             if(userGw != null) {
-                LOG.warn("User {} is connected to gateway {}.", clientMsg.getRecipient(), userGw);
+                LOG.info("User {} is connected to gateway {}.", clientMsg.getRecipient(), userGw);
             }
             else {
-                LOG.warn("User {} is not connected.", clientMsg.getRecipient());
+                LOG.info("User {} is not connected.", clientMsg.getRecipient());
             }
         }
     }

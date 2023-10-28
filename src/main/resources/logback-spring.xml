@@ -33,4 +33,8 @@
         <appender-ref ref="Console" />
         <appender-ref ref="Loki"/>
     </root>
+
+    <logger name="xyz.cludus" level="debug" additivity="false">
+        <appender-ref ref="Console" />
+    </logger>
 </configuration>

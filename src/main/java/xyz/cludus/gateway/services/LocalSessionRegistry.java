@@ -21,7 +21,7 @@ public class LocalSessionRegistry {
     private GlogalSessionRegistry globalRegistry;
 
     public UserSessionHandler register(WebSocketSession session) {
-        LOG.info("registering a new websocket connection {}", UserSessionHandler.findUser(session));
+        LOG.info("Registering a new websocket connection {}", UserSessionHandler.findUser(session));
         var result = new UserSessionHandler(session, this, globalRegistry);
         sessionsMap.put(result.getUser(), result);
         updateMetrics();
@@ -58,7 +58,7 @@ public class LocalSessionRegistry {
                 .filter(x -> !x.isOpen())
                 .map(UserSessionHandler::getUser)
                 .toList();
-        LOG.info("evicting  {} websocket connections", toRemove.size());
+        LOG.info("Evicting  {} websocket connections", toRemove.size());
         toRemove.forEach(k -> sessionsMap.remove(k));
         updateMetrics();
     }

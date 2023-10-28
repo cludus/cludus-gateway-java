@@ -5,6 +5,9 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +17,8 @@ import java.util.Date;
 
 @Service
 public class JwtService {
+    private static final Logger LOG = LoggerFactory.getLogger(LocalSessionRegistry.class);
+
     private String secretKey;
 
     private String issuer;
@@ -48,10 +53,16 @@ public class JwtService {
 
     public String parseToken(String token) {
         if (token != null) {
-            var jwt = parser
-                    .parseClaimsJws(token);
-            if (jwt.getBody().getExpiration().after(new Date())) {
-                return jwt.getBody().getSubject();
+            try {
+                var jwt = parser
+                        .parseClaimsJws(token);
+                if (jwt.getBody().getExpiration().after(new Date())) {
+                    return jwt.getBody().getSubject();
+                }
+            }
+            catch (SignatureException ex) {
+                LOG.info(ex.getMessage());
+                return null;
             }
         }
         return null;
