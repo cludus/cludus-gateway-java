@@ -1,10 +1,16 @@
 package xyz.cludus.gateway;
 
 import com.google.gson.Gson;
+import com.redis.testcontainers.RedisContainer;
 import jakarta.websocket.*;
 import org.apache.tomcat.websocket.pojo.PojoMessageHandlerWholeText;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.utility.DockerImageName;
 import xyz.cludus.gateway.dtos.ClientMessageDto;
 import xyz.cludus.gateway.dtos.ServerMessageDto;
 import xyz.cludus.gateway.services.JwtService;

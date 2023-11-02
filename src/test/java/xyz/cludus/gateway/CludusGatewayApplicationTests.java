@@ -1,7 +1,7 @@
 package xyz.cludus.gateway;
 
+import com.redis.testcontainers.RedisContainer;
 import jakarta.websocket.ContainerProvider;
-import jakarta.websocket.Session;
 import jakarta.websocket.WebSocketContainer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -11,10 +11,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import xyz.cludus.gateway.dtos.ClientMessageDto;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.utility.DockerImageName;
 import xyz.cludus.gateway.services.JwtService;
 
-import java.net.URI;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -29,6 +31,21 @@ class CludusGatewayApplicationTests {
 	private JwtService jwtService;
 
 	private static WebSocketContainer container;
+
+	@Container
+	private static final RedisContainer REDIS_CONTAINER =
+			new RedisContainer(DockerImageName.parse("redis:5.0.3-alpine")).withExposedPorts(6379);
+
+	@DynamicPropertySource
+	private static void registerRedisProperties(DynamicPropertyRegistry registry) {
+		registry.add("spring.redis.host", REDIS_CONTAINER::getHost);
+		registry.add("spring.redis.port", () -> REDIS_CONTAINER.getMappedPort(6379).toString());
+	}
+
+	@Test
+	void givenRedisContainerConfiguredWithDynamicProperties_whenCheckingRunningStatus_thenStatusIsRunning() {
+		Assertions.assertTrue(REDIS_CONTAINER.isRunning());
+	}
 
 	@BeforeAll
 	public static void setup() {
