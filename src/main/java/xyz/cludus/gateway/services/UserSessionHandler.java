@@ -28,13 +28,13 @@ public class UserSessionHandler {
 
     private LocalSessionRegistry localRegistry;
 
-    private GlogalSessionRegistry globalRegistry;
+    private GlobalSessionRegistry globalRegistry;
 
     public static String findUser(WebSocketSession session) {
         return Objects.requireNonNull(session.getPrincipal()).getName();
     }
 
-    public UserSessionHandler(WebSocketSession session, LocalSessionRegistry localRegistry, GlogalSessionRegistry globalRegistry) {
+    public UserSessionHandler(WebSocketSession session, LocalSessionRegistry localRegistry, GlobalSessionRegistry globalRegistry) {
         this.session = session;
         this.localRegistry = localRegistry;
         this.globalRegistry = globalRegistry;

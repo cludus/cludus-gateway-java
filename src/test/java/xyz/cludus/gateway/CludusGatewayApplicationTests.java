@@ -1,6 +1,7 @@
 package xyz.cludus.gateway;
 
 import com.redis.testcontainers.RedisContainer;
+import com.redis.testcontainers.junit.jupiter.RedisTestContextsSource;
 import jakarta.websocket.ContainerProvider;
 import jakarta.websocket.WebSocketContainer;
 import org.junit.jupiter.api.Assertions;
@@ -14,12 +15,14 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 import xyz.cludus.gateway.services.JwtService;
 
 import java.util.*;
 import java.util.concurrent.*;
 
+@Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CludusGatewayApplicationTests {
 	private static final Logger LOG = LoggerFactory.getLogger(CludusChatUser.class);
@@ -38,8 +41,11 @@ class CludusGatewayApplicationTests {
 
 	@DynamicPropertySource
 	private static void registerRedisProperties(DynamicPropertyRegistry registry) {
-		registry.add("spring.redis.host", REDIS_CONTAINER::getHost);
-		registry.add("spring.redis.port", () -> REDIS_CONTAINER.getMappedPort(6379).toString());
+		registry.add("spring.data.redis.host", REDIS_CONTAINER::getHost);
+		registry.add("spring.data.redis.port", () -> {
+			System.out.println(REDIS_CONTAINER.getMappedPort(6379).toString());
+			return REDIS_CONTAINER.getMappedPort(6379).toString();
+		});
 	}
 
 	@Test
@@ -54,6 +60,7 @@ class CludusGatewayApplicationTests {
 
 	@Test
 	public void testGetLog() throws Exception {
+		Assertions.assertTrue(REDIS_CONTAINER.isRunning());
 		Map<String, CludusChatUser> users = createUsers(10);
 		LinkedList<CludusChatTestMessage> messages = createMessages(10000, users);
 		Map<String, CludusChatTestMessage> messageByContent = new ConcurrentHashMap<>();

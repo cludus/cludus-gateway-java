@@ -8,7 +8,7 @@ import java.time.Duration;
 import java.util.UUID;
 
 @Service
-public class GlogalSessionRegistry {
+public class GlobalSessionRegistry {
     @Autowired
     private StringRedisTemplate redis;
 

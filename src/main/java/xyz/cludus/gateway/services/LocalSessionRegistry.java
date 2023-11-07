@@ -18,7 +18,7 @@ public class LocalSessionRegistry {
     private Map<String, UserSessionHandler> sessionsMap = new ConcurrentHashMap<>();
 
     @Autowired
-    private GlogalSessionRegistry globalRegistry;
+    private GlobalSessionRegistry globalRegistry;
 
     public UserSessionHandler register(WebSocketSession session) {
         LOG.info("Registering a new websocket connection {}", UserSessionHandler.findUser(session));
@@ -42,7 +42,9 @@ public class LocalSessionRegistry {
             try {
                 LOG.info("closing a websocket connection {}", UserSessionHandler.findUser(session));
                 session.close(status);
-                sessionsMap.remove(userSession.getUser());
+                if(userSession != null) {
+                    sessionsMap.remove(userSession.getUser());
+                }
             }
             catch (Exception ex) {
                 LOG.error(ex.getMessage(), ex);
