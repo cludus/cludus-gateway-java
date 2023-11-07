@@ -1,7 +1,6 @@
 package xyz.cludus.gateway;
 
 import com.redis.testcontainers.RedisContainer;
-import com.redis.testcontainers.junit.jupiter.RedisTestContextsSource;
 import jakarta.websocket.ContainerProvider;
 import jakarta.websocket.WebSocketContainer;
 import org.junit.jupiter.api.Assertions;
