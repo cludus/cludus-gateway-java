@@ -1,6 +1,7 @@
 package xyz.cludus.gateway.dtos;
 
 import lombok.Data;
+import lombok.ToString;
 
 /**
  * This DTO refers to a chat message sent by a client device.

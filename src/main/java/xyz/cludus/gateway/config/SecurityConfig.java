@@ -37,6 +37,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests
                             .requestMatchers("/").permitAll()
+                            .requestMatchers("/send-message").permitAll()
                             .requestMatchers("/actuator/*").permitAll()
                             .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

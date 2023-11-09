@@ -5,6 +5,8 @@ import com.google.gson.JsonSyntaxException;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -109,6 +111,7 @@ public class UserSessionHandler {
             String userGw = globalRegistry.findGateway(user);
             if(userGw != null) {
                 LOG.info("User {} is connected to gateway {}.", clientMsg.getRecipient(), userGw);
+                globalRegistry.sendMessage(userGw, clientMsg);
             }
             else {
                 LOG.info("User {} is not connected.", clientMsg.getRecipient());
