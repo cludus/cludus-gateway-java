@@ -45,7 +45,9 @@ dependencies {
 	implementation "io.micrometer:micrometer-registry-prometheus:1.10.6"
 	implementation 'com.google.code.gson:gson:2.10.1'
 	implementation 'com.github.loki4j:loki-logback-appender:1.4.1'
-	//implementation 'org.springframework.cloud:spring-cloud-starter-consul-all:4.0.2'
+
+	implementation 'org.springframework.cloud:spring-cloud-starter-consul-all:4.0.2'
+	testImplementation "org.testcontainers:consul:1.19.1"
 
 	implementation 'org.springframework.data:spring-data-redis'
 	implementation 'redis.clients:jedis:4.4.3'

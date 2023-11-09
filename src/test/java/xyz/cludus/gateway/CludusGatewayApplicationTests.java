@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.consul.ConsulContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
@@ -38,12 +39,22 @@ class CludusGatewayApplicationTests {
 	private static final RedisContainer REDIS_CONTAINER =
 			new RedisContainer(DockerImageName.parse("redis:5.0.3-alpine")).withExposedPorts(6379);
 
+	@Container
+	public static final ConsulContainer CONSUL_CONTAINER =
+			new ConsulContainer(DockerImageName.parse("hashicorp/consul:1.15")).withExposedPorts(8500);
+
 	@DynamicPropertySource
 	private static void registerRedisProperties(DynamicPropertyRegistry registry) {
 		registry.add("spring.data.redis.host", REDIS_CONTAINER::getHost);
 		registry.add("spring.data.redis.port", () -> {
 			System.out.println(REDIS_CONTAINER.getMappedPort(6379).toString());
 			return REDIS_CONTAINER.getMappedPort(6379).toString();
+		});
+
+		registry.add("spring.cloud.consul.host", CONSUL_CONTAINER::getHost);
+		registry.add("spring.cloud.consul.port", () -> {
+			System.out.println(CONSUL_CONTAINER.getMappedPort(8500).toString());
+			return CONSUL_CONTAINER.getMappedPort(8500).toString();
 		});
 	}
 
@@ -94,7 +105,7 @@ class CludusGatewayApplicationTests {
 				}
 			}
 			catch (Exception ex) {
-				ex.printStackTrace();
+				LOG.error(ex.getMessage(), ex);
 			}
 		}, 1000, 1, TimeUnit.MILLISECONDS);
 		cdl.await();
