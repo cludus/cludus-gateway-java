@@ -19,6 +19,7 @@ public class ServerMessageDto {
     private Actions action;
     private String errorMsg;
     private String sender;
+    private String recipient;
     private String content;
 
     public static ServerMessageDto ack() {
@@ -34,9 +35,10 @@ public class ServerMessageDto {
         return result;
     }
 
-    public static ServerMessageDto message(String sender, String content) {
+    public static ServerMessageDto message(String sender, String recipient, String content) {
         ServerMessageDto result = new ServerMessageDto();
         result.action = Actions.MESSAGE;
+        result.recipient = recipient;
         result.sender = sender;
         result.content = content;
         return result;

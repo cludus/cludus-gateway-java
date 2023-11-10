@@ -17,10 +17,4 @@ public class IndexController {
     public String index() {
         return "Cludus Spring Gateway";
     }
-
-    @PostMapping("/send-message")
-    public String sendMessage(@RequestBody ClientMessageDto clientMsg) {
-        LOG.info(clientMsg.toString());
-        return "OK";
-    }
 }

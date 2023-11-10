@@ -97,21 +97,25 @@ public class UserSessionHandler {
         globalRegistry.updateGateway(user);
     }
 
+    public void messageReceived(ServerMessageDto msg) {
+        if(LOG.isDebugEnabled()) {
+            LOG.debug("Sending message to client: {} from user {}", GSON.toJson(msg), user);
+        }
+        sendMessage(toTextMessage(msg));
+    }
+
     void sendActionReceived(ClientMessageDto clientMsg) throws IOException {
         lastUpdated = LocalDateTime.now();
-        var response = ServerMessageDto.message(user, clientMsg.getContent());
+        var response = ServerMessageDto.message(user, clientMsg.getRecipient(), clientMsg.getContent());
         var reciptHandler = localRegistry.getSession(clientMsg.getRecipient());
         if(reciptHandler != null) {
-            if(LOG.isDebugEnabled()) {
-                LOG.debug("Sending message to client: {} from user {}", GSON.toJson(response), user);
-            }
-            reciptHandler.sendMessage(toTextMessage(response));
+            reciptHandler.messageReceived(response);
         }
         else {
-            String userGw = globalRegistry.findGateway(user);
+            String userGw = globalRegistry.findGateway(response.getRecipient());
             if(userGw != null) {
-                LOG.info("User {} is connected to gateway {}.", clientMsg.getRecipient(), userGw);
-                globalRegistry.sendMessage(userGw, clientMsg);
+                LOG.info("User {} is connected to gateway {}.", response.getRecipient(), userGw);
+                globalRegistry.sendMessage(userGw, response);
             }
             else {
                 LOG.info("User {} is not connected.", clientMsg.getRecipient());

@@ -9,6 +9,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import xyz.cludus.gateway.dtos.ClientMessageDto;
+import xyz.cludus.gateway.dtos.ServerMessageDto;
 
 import java.net.URI;
 import java.time.Duration;
@@ -40,7 +41,7 @@ public class GlobalSessionRegistry {
         redis.opsForValue().set(user, gatewayId, Duration.ofMinutes(10));
     }
 
-    public void sendMessage(String gatewayId, ClientMessageDto message) {
+    public void sendMessage(String gatewayId, ServerMessageDto message) {
         URI uri = findUri(gatewayId);
         if(uri != null) {
             rest.postForObject(uri + "/send-message", message, String.class);
