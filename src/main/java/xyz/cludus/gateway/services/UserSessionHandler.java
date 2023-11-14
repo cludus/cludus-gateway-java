@@ -3,6 +3,7 @@ package xyz.cludus.gateway.services;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +18,8 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Slf4j
 public class UserSessionHandler {
-    private static final Logger LOG = LoggerFactory.getLogger(UserSessionHandler.class);
-
     private static final Gson GSON = new Gson();
 
     private WebSocketSession session;
@@ -58,14 +58,14 @@ public class UserSessionHandler {
             session.close(CloseStatus.NO_CLOSE_FRAME);
         }
         catch (Exception ex) {
-            LOG.error(ex.getMessage(), ex);
+            log.error(ex.getMessage(), ex);
         }
     }
 
     public void messageReceived(TextMessage message) {
         try {
-            if(LOG.isDebugEnabled()) {
-                LOG.debug("Message received: {}, from user {}", GSON.toJson(message), user);
+            if(log.isDebugEnabled()) {
+                log.debug("Message received: {}, from user {}", GSON.toJson(message), user);
             }
             var clientMsg = readClientMessage(message);
             if(clientMsg.getAction() == ClientMessageDto.Actions.SEND) {
@@ -75,8 +75,8 @@ public class UserSessionHandler {
                 heartBeatReceived(clientMsg);
             }
 
-            if(LOG.isDebugEnabled()) {
-                LOG.debug("Sending ack response for message: {} to {}", GSON.toJson(message), user);
+            if(log.isDebugEnabled()) {
+                log.debug("Sending ack response for message: {} to {}", GSON.toJson(message), user);
             }
             var response = ServerMessageDto.ack();
             sendMessage(toTextMessage(response));
@@ -86,7 +86,7 @@ public class UserSessionHandler {
             sendMessage(response);
         }
         catch (Exception ex) {
-            LOG.error(ex.getMessage(), ex);
+            log.error(ex.getMessage(), ex);
             var response = ServerMessageDto.error(ex.getMessage());
             sendMessage(toTextMessage(response));
         }
@@ -98,8 +98,8 @@ public class UserSessionHandler {
     }
 
     public void messageReceived(ServerMessageDto msg) {
-        if(LOG.isDebugEnabled()) {
-            LOG.debug("Sending message to client: {} from user {}", GSON.toJson(msg), user);
+        if(log.isDebugEnabled()) {
+            log.debug("Sending message to client: {} from user {}", GSON.toJson(msg), user);
         }
         sendMessage(toTextMessage(msg));
     }
@@ -114,11 +114,11 @@ public class UserSessionHandler {
         else {
             String userGw = globalRegistry.findGateway(response.getRecipient());
             if(userGw != null) {
-                LOG.info("User {} is connected to gateway {}.", response.getRecipient(), userGw);
+                log.info("User {} is connected to gateway {}.", response.getRecipient(), userGw);
                 globalRegistry.sendMessage(userGw, response);
             }
             else {
-                LOG.info("User {} is not connected.", clientMsg.getRecipient());
+                log.info("User {} is not connected.", clientMsg.getRecipient());
             }
         }
     }
@@ -136,7 +136,7 @@ public class UserSessionHandler {
             session.sendMessage(message);
         }
         catch (Exception ex) {
-            LOG.error(ex.getMessage(), ex);
+            log.error(ex.getMessage(), ex);
         }
     }
 

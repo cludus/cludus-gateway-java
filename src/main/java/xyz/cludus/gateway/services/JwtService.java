@@ -6,6 +6,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,9 +17,8 @@ import java.time.OffsetDateTime;
 import java.util.Date;
 
 @Service
+@Slf4j
 public class JwtService {
-    private static final Logger LOG = LoggerFactory.getLogger(LocalSessionRegistry.class);
-
     private String secretKey;
 
     private String issuer;
@@ -61,7 +61,7 @@ public class JwtService {
                 }
             }
             catch (SignatureException ex) {
-                LOG.info(ex.getMessage());
+                log.info(ex.getMessage());
                 return null;
             }
         }

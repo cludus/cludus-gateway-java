@@ -2,9 +2,11 @@ package xyz.cludus.gateway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 import java.util.UUID;
 
+@EnableDiscoveryClient
 @SpringBootApplication
 public class CludusGatewayApplication {
 

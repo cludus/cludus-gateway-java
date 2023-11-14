@@ -1,6 +1,7 @@
 package xyz.cludus.gateway.controllers;
 
 import com.google.gson.Gson;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +17,8 @@ import xyz.cludus.gateway.services.GlobalSessionRegistry;
 import xyz.cludus.gateway.services.LocalSessionRegistry;
 
 @RestController
+@Slf4j
 public class IncomingChatController {
-    private static final Logger LOG = LoggerFactory.getLogger(GlobalSessionRegistry.class);
-
     @Autowired
     private LocalSessionRegistry localRegistry;
 

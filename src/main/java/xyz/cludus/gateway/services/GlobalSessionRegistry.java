@@ -1,5 +1,7 @@
 package xyz.cludus.gateway.services;
 
+import io.grpc.ManagedChannelBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import xyz.cludus.gateway.dtos.ClientMessageDto;
 import xyz.cludus.gateway.dtos.ServerMessageDto;
+import xyz.cludus.gwcomm.GatewayServiceGrpc;
+import xyz.cludus.gwcomm.MessageRequest;
 
 import java.net.URI;
 import java.time.Duration;
@@ -17,9 +21,8 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class GlobalSessionRegistry {
-    private static final Logger LOG = LoggerFactory.getLogger(GlobalSessionRegistry.class);
-
     @Autowired
     private StringRedisTemplate redis;
 
@@ -37,14 +40,17 @@ public class GlobalSessionRegistry {
     }
 
     public void updateGateway(String user) {
-        LOG.info("Registering user: {} on gateway instance: {}", user, gatewayId);
+        log.info("Registering user: {} on gateway instance: {}", user, gatewayId);
         redis.opsForValue().set(user, gatewayId, Duration.ofMinutes(10));
     }
 
     public void sendMessage(String gatewayId, ServerMessageDto message) {
         URI uri = findUri(gatewayId);
         if(uri != null) {
-            rest.postForObject(uri + "/send-message", message, String.class);
+            var cb = ManagedChannelBuilder.forAddress(uri.getHost(), uri.getPort()).usePlaintext();
+            var client = GatewayServiceGrpc.newBlockingStub(cb.build());
+            client.deliver(MessageRequest.newBuilder().build());
+            //rest.postForObject(uri + "/send-message", message, String.class);
         }
     }
 

@@ -1,6 +1,7 @@
 package xyz.cludus.gateway.services;
 
 import io.micrometer.core.instrument.Metrics;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,15 +14,15 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
+@Slf4j
 public class LocalSessionRegistry {
-    private static final Logger LOG = LoggerFactory.getLogger(LocalSessionRegistry.class);
     private Map<String, UserSessionHandler> sessionsMap = new ConcurrentHashMap<>();
 
     @Autowired
     private GlobalSessionRegistry globalRegistry;
 
     public UserSessionHandler register(WebSocketSession session) {
-        LOG.info("Registering a new websocket connection {}", UserSessionHandler.findUser(session));
+        log.info("Registering a new websocket connection {}", UserSessionHandler.findUser(session));
         var result = new UserSessionHandler(session, this, globalRegistry);
         sessionsMap.put(result.getUser(), result);
         updateMetrics();
@@ -40,14 +41,14 @@ public class LocalSessionRegistry {
         var userSession = getSession(session);
         if(session.isOpen()) {
             try {
-                LOG.info("closing a websocket connection {}", UserSessionHandler.findUser(session));
+                log.info("closing a websocket connection {}", UserSessionHandler.findUser(session));
                 session.close(status);
                 if(userSession != null) {
                     sessionsMap.remove(userSession.getUser());
                 }
             }
             catch (Exception ex) {
-                LOG.error(ex.getMessage(), ex);
+                log.error(ex.getMessage(), ex);
             }
         }
     }
@@ -60,7 +61,7 @@ public class LocalSessionRegistry {
                 .filter(x -> !x.isOpen())
                 .map(UserSessionHandler::getUser)
                 .toList();
-        LOG.info("Evicting  {} websocket connections", toRemove.size());
+        log.info("Evicting  {} websocket connections", toRemove.size());
         toRemove.forEach(k -> sessionsMap.remove(k));
         updateMetrics();
     }

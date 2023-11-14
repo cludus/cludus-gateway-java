@@ -11,8 +11,6 @@ import xyz.cludus.gateway.services.GlobalSessionRegistry;
 
 @RestController
 public class IndexController {
-    private static final Logger LOG = LoggerFactory.getLogger(GlobalSessionRegistry.class);
-
     @GetMapping("/")
     public String index() {
         return "Cludus Spring Gateway";
