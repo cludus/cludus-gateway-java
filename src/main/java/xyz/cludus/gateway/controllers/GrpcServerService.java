@@ -1,10 +1,10 @@
 package xyz.cludus.gateway.controllers;
 
 import io.grpc.stub.StreamObserver;
-import net.devh.boot.grpc.server.service.GrpcService;
+import org.lognet.springboot.grpc.GRpcService;
 import xyz.cludus.gwcomm.*;
 
-@GrpcService
+@GRpcService
 public class GrpcServerService extends GatewayServiceGrpc.GatewayServiceImplBase {
     @Override
     public void query(QueryRequest request, StreamObserver<QueryResponse> responseObserver) {
