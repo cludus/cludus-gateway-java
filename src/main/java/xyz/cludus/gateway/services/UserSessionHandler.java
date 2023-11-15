@@ -13,6 +13,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import xyz.cludus.gateway.dtos.ClientMessageDto;
 import xyz.cludus.gateway.dtos.ServerMessageDto;
+import xyz.cludus.gwcomm.MessageRequest;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -97,6 +98,13 @@ public class UserSessionHandler {
         globalRegistry.updateGateway(user);
     }
 
+    public void messageReceived(MessageRequest msg) {
+        if(log.isDebugEnabled()) {
+            log.debug("Sending message to client: {} from user {}", GSON.toJson(msg), user);
+        }
+        sendMessage(toTextMessage(msg));
+    }
+
     public void messageReceived(ServerMessageDto msg) {
         if(log.isDebugEnabled()) {
             log.debug("Sending message to client: {} from user {}", GSON.toJson(msg), user);
@@ -128,6 +136,10 @@ public class UserSessionHandler {
     }
 
     private TextMessage toTextMessage(ServerMessageDto message) {
+        return new TextMessage(GSON.toJson(message));
+    }
+
+    private TextMessage toTextMessage(MessageRequest message) {
         return new TextMessage(GSON.toJson(message));
     }
 

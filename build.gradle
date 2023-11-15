@@ -27,7 +27,7 @@ dependencies {
 	implementation 'com.google.code.gson:gson:2.10.1'
 	implementation 'com.github.loki4j:loki-logback-appender:1.4.1'
 
-	implementation 'xyz.cludus:cludus-gwcomm:0.0.2-local1'
+	implementation 'xyz.cludus:cludus-gwcomm:0.0.2-local2'
 	implementation 'io.github.lognet:grpc-spring-boot-starter:5.1.5'
 	implementation 'org.springframework.cloud:spring-cloud-starter-consul-discovery:4.0.2'
 

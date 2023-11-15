@@ -49,7 +49,12 @@ public class GlobalSessionRegistry {
         if(uri != null) {
             var cb = ManagedChannelBuilder.forAddress(uri.getHost(), uri.getPort()).usePlaintext();
             var client = GatewayServiceGrpc.newBlockingStub(cb.build());
-            client.deliver(MessageRequest.newBuilder().build());
+            var msg = MessageRequest.newBuilder()
+                    .setSender(message.getSender())
+                    .setRecipient(message.getRecipient())
+                    .setContent(message.getContent())
+                    .build();
+            client.deliver(msg);
             //rest.postForObject(uri + "/send-message", message, String.class);
         }
     }
