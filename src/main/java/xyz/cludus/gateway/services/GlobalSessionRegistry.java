@@ -26,7 +26,7 @@ public class GlobalSessionRegistry {
     @Autowired
     private StringRedisTemplate redis;
 
-    @Value("${spring.cloud.consul.discovery.instanceId}")
+    @Value("grpc-${spring.cloud.consul.discovery.instanceId}")
     private String gatewayId;
 
     @Autowired
@@ -55,7 +55,7 @@ public class GlobalSessionRegistry {
     }
 
     private URI findUri(String gatewayId) {
-        var instances =  discoveryClient.getInstances("cludus-gateway");
+        var instances =  discoveryClient.getInstances("grpc-cludus-gateway");
         for (var instance : instances) {
             if(instance.getInstanceId().equals(gatewayId)) {
                 System.out.println(instance.getUri());

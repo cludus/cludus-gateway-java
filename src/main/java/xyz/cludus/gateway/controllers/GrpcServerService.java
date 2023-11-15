@@ -17,6 +17,10 @@ public class GrpcServerService extends GatewayServiceGrpc.GatewayServiceImplBase
 
     @Override
     public void deliver(MessageRequest request, StreamObserver<MessageResponse> responseObserver) {
-        super.deliver(request, responseObserver);
+        final MessageResponse response = MessageResponse.newBuilder()
+                .setResult(true)
+                .build();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
     }
 }
