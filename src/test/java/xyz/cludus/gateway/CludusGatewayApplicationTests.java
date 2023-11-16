@@ -60,8 +60,9 @@ class CludusGatewayApplicationTests {
 	}
 
 	@Test
-	void givenRedisContainerConfiguredWithDynamicProperties_whenCheckingRunningStatus_thenStatusIsRunning() {
+	void testContainers() {
 		Assertions.assertTrue(REDIS_CONTAINER.isRunning());
+		Assertions.assertTrue(CONSUL_CONTAINER.isRunning());
 	}
 
 	@BeforeAll
@@ -72,6 +73,7 @@ class CludusGatewayApplicationTests {
 	@Test
 	public void testGetLog() throws Exception {
 		Assertions.assertTrue(REDIS_CONTAINER.isRunning());
+		Assertions.assertTrue(CONSUL_CONTAINER.isRunning());
 		Map<String, CludusChatUser> users = createUsers(10);
 		LinkedList<CludusChatTestMessage> messages = createMessages(10000, users);
 		Map<String, CludusChatTestMessage> messageByContent = new ConcurrentHashMap<>();
@@ -94,7 +96,7 @@ class CludusGatewayApplicationTests {
 		ScheduledExecutorService executor = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
 		executor.scheduleAtFixedRate(() -> {
 			try {
-				LOG.info("sending message, {} remaining", messages.size());
+				LOG.debug("sending message, {} remaining", messages.size());
 				if (messages.isEmpty()) {
 					return;
 				}
@@ -113,6 +115,8 @@ class CludusGatewayApplicationTests {
 
 		//Should have received all messages
 		Assertions.assertEquals(0, messages.stream().filter(x -> !x.isReceived()).count() );
+		Assertions.assertTrue(REDIS_CONTAINER.isRunning());
+		Assertions.assertTrue(CONSUL_CONTAINER.isRunning());
 	}
 
 	private LinkedList<CludusChatTestMessage> createMessages(int count, Map<String, CludusChatUser> users) {
