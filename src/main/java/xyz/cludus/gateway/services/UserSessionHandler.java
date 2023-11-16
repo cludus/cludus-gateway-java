@@ -140,7 +140,11 @@ public class UserSessionHandler {
     }
 
     private TextMessage toTextMessage(MessageRequest message) {
-        return new TextMessage(GSON.toJson(message));
+        var msg = new ServerMessageDto();
+        msg.setSender(message.getSender());
+        msg.setContent(message.getContent());
+        msg.setRecipient(message.getRecipient());
+        return toTextMessage(msg);
     }
 
     synchronized void sendMessage(TextMessage message) {

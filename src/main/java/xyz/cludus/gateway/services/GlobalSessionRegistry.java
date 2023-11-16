@@ -30,9 +30,6 @@ public class GlobalSessionRegistry {
     private String gatewayId;
 
     @Autowired
-    private RestTemplate rest;
-
-    @Autowired
     private DiscoveryClient discoveryClient;
 
     public String findGateway(String username) {
@@ -55,7 +52,6 @@ public class GlobalSessionRegistry {
                     .setContent(message.getContent())
                     .build();
             client.deliver(msg);
-            //rest.postForObject(uri + "/send-message", message, String.class);
         }
     }
 
@@ -63,7 +59,6 @@ public class GlobalSessionRegistry {
         var instances =  discoveryClient.getInstances("grpc-cludus-gateway");
         for (var instance : instances) {
             if(instance.getInstanceId().equals(gatewayId)) {
-                System.out.println(instance.getUri());
                 return instance.getUri();
             }
         }
