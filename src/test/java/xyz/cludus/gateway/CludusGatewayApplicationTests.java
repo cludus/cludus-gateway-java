@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -42,7 +43,9 @@ class CludusGatewayApplicationTests {
 
 	@Container
 	public static final ConsulContainer CONSUL_CONTAINER =
-			new ConsulContainer(DockerImageName.parse("hashicorp/consul:1.15")).withExposedPorts(8500);
+			new ConsulContainer(DockerImageName.parse("hashicorp/consul:1.15"))
+					.withExposedPorts(8500)
+					.withConsulCommand("agent -server -ui -node=server-1 -bootstrap-expect=1 -client=0.0.0.0");
 
 	@DynamicPropertySource
 	private static void registerRedisProperties(DynamicPropertyRegistry registry) {
@@ -70,6 +73,7 @@ class CludusGatewayApplicationTests {
 		container = ContainerProvider.getWebSocketContainer();
 	}
 
+	@DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
 	@Test
 	public void testGetLog() throws Exception {
 		Assertions.assertTrue(REDIS_CONTAINER.isRunning());
