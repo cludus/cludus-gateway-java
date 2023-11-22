@@ -19,9 +19,8 @@ def githubToken = System.getenv().getOrDefault('GITHUB_TOKEN', 'none')
 
 repositories {
 	mavenCentral()
-	mavenLocal()
 	maven {
-		url = uri("https://maven.pkg.github.com/cludus/cludus-gwcomm-proto")
+		url = uri("https://maven.pkg.github.com/cludus/maven")
 		credentials {
 			username = githubActor
 			password = githubToken
@@ -37,7 +36,7 @@ dependencies {
 	implementation 'com.google.code.gson:gson:2.10.1'
 	implementation 'com.github.loki4j:loki-logback-appender:1.4.1'
 
-	implementation 'xyz.cludus:cludus-gwcomm:0.1.1'
+	implementation 'xyz.cludus:cludus-gwcomm:0.1.2'
 	implementation 'io.github.lognet:grpc-spring-boot-starter:5.1.5'
 	implementation 'org.springframework.cloud:spring-cloud-starter-consul-discovery:4.0.2'
 
@@ -109,7 +108,7 @@ publishing {
 	repositories {
 		maven {
 			name = "GitHubPackages"
-			url = "https://maven.pkg.github.com/cludus"
+			url = "https://maven.pkg.github.com/cludus/cludus-gwcomm-proto"
 			credentials {
 				username = githubActor
 				password = githubToken
