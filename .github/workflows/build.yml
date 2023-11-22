@@ -34,19 +34,10 @@ jobs:
         java-version: '17'
         distribution: 'corretto'
 
-    - name: Build with Gradle cmd
-      run: |
-        echo $GITHUB_ACTOR
-        echo $GITHUB_TOKEN
-        ./gradlew build
-      env:
-        GITHUB_ACTOR: ${{ secrets.PACKAGES_ACTOR }}
-        GITHUB_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
-
     - name: Build with Gradle
       uses: gradle/gradle-build-action@v2.8.1
       with:
         arguments: build
       env:
-        GITHUB_ACTOR: ${{ github.actor }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_ACTOR: ${{ secrets.PACKAGES_ACTOR }}
+        GITHUB_TOKEN: ${{ secrets.PACKAGES_TOKEN }}

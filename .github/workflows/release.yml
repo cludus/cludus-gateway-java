@@ -52,8 +52,8 @@ jobs:
       with:
         arguments: release -Prelease.useAutomaticVersion=true
       env:
-        GITHUB_ACTOR: ${{ github.actor }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_ACTOR: ${{ secrets.PACKAGES_ACTOR }}
+        GITHUB_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
     - name: Create Github Release
       id: create_release
       uses: actions/create-release@v1
