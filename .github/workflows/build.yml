@@ -38,7 +38,7 @@ jobs:
       run: |
         echo $GITHUB_ACTOR
         echo $GITHUB_TOKEN
-        ./gradlew build -d
+        ./gradlew build
       env:
         GITHUB_ACTOR: ${{ secrets.PACKAGES_ACTOR }}
         GITHUB_TOKEN: ${{ secrets.PACKAGES_ACTOR }}
