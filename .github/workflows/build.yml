@@ -19,7 +19,7 @@ permissions:
   statuses: write
   actions: write
   checks: write
-  packages: read
+  packages: write
 
 jobs:
   build:
