@@ -14,8 +14,12 @@ on:
     branches: [ "main" ]
 
 permissions:
-  contents: read
-  packages: read
+  deployments: write
+  contents: write
+  statuses: write
+  actions: write
+  checks: write
+  packages: write
 
 jobs:
   build:
@@ -29,6 +33,10 @@ jobs:
       with:
         java-version: '17'
         distribution: 'corretto'
+
+    - name: Build with Gradle cmd
+      run: |
+        ./gradlew build
 
     - name: Build with Gradle
       uses: gradle/gradle-build-action@v2.8.1
