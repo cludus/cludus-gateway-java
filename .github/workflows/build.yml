@@ -38,7 +38,7 @@ jobs:
       run: |
         echo $GITHUB_ACTOR
         echo $GITHUB_TOKEN
-        ./gradlew build
+        ./gradlew build -d
       env:
         GITHUB_ACTOR: ${{ github.actor }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
